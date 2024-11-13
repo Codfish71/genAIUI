@@ -1,13 +1,17 @@
 // src/ApiService.js
 import axios from 'axios';
+import data from './tradeData.json';
 
 const API_URL = 'https://api.example.com'; // Replace with your API URL
 
 const apiService = {
     getData: async () => {
         try {
-            const response = await axios.get(`${API_URL}/data`);
-            return response.data;
+            console.log("Getting Trade Datain API SERVICE")
+            // const response = await axios.get(`${API_URL}/data`);
+            // const response = await fetch('');
+            // const result = await response.json()
+            return data.data;
         } catch (error) {
             console.error('Error fetching data:', error);
             throw error;

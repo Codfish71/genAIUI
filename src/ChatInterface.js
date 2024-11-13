@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import apiService from './service/ApiService';
+import TradeTable from './components/TradeTable';
 
 function ChatInterface() {
   const [message, setMessage] = useState('');
@@ -12,6 +13,7 @@ function ChatInterface() {
   const [text, setText] = useState('');
   const [isListening, setIsListening] = useState(false);
   const [recognition, setRecognition] = useState(null);
+  const [tradeData, setTradeData] = useState(null);
 
   useEffect(() => {
     if (!('webkitSpeechRecognition' in window) && !('SpeechRecognition' in window)) {
@@ -36,7 +38,7 @@ function ChatInterface() {
         }
       }
       setText(finalTranscript + interimTranscript);
-      apiService.postData(text)
+      // apiService.postData(text)
       console.log("" + finalTranscript + interimTranscript)
     };
 
@@ -49,6 +51,7 @@ function ChatInterface() {
 
   const handleStartListening = () => {
     if (recognition) {
+      console.log("Listening")
       recognition.start();
       setIsListening(true);
     }
@@ -80,6 +83,19 @@ function ChatInterface() {
       setMessages([...messages, message]);
       setMessage('');
     }
+    console.log("Getting the Trade Data")
+
+    apiService.getData().then(
+      response => {
+        setTradeData(response)
+      }
+    )
+
+
+  };
+
+  const handleClear = () => {
+    setText('')
   };
 
   return (
@@ -93,8 +109,8 @@ function ChatInterface() {
               className="ml-2 rounded-circle"
               style={{ width: '70px', height: '70px', backgroundColor: '#1e88e5', border: 'none', outline: 'none' }}
             >
-              <span role="img" aria-label={isListening ? 'Stop Listening' : 'Start Listening'} style={{ fontSize: '2rem' }}>
-                {isListening ? '🔇' : '🔊'}
+              <span role="img" aria-label={isListening ? 'Stop Listening' : 'Start Listening'} style={{ fontSize: '1rem' }}>
+                {isListening ? 'Stop 🔇' : 'start 🔊'}
               </span>
             </Button>
           </InputGroup>
@@ -120,6 +136,15 @@ function ChatInterface() {
               Query
             </span>
           </Button>
+          <Button
+            onClick={handleClear}
+            className="ml-2"
+            style={{ width: '100px', height: '50px', backgroundColor: '#1e88e5', border: 'none', outline: 'none', }}
+          >
+            <span role="img" aria-label="Submit" style={{ fontSize: '1rem' }}>
+              Clear
+            </span>
+          </Button>
         </Col>
       </Row>
       <Row>
@@ -129,7 +154,7 @@ function ChatInterface() {
               as="textarea"
               rows="4"
               readOnly
-              value={sqlOutput || "SELECT * FROM messages WHERE content LIKE '....'"}
+              value={sqlOutput || "DB Query"}
               className="border-0 bg-light"
               style={{ fontSize: '1rem', color: '#495057' }}
             />
@@ -139,66 +164,10 @@ function ChatInterface() {
           </InputGroup>
         </Col>
       </Row>
+
+      {tradeData != null ? <TradeTable data={tradeData} /> : <p></p>}
     </Container>
   );
 }
 
 export default ChatInterface;
-
-
-
-// import React, { useState } from 'react';
-// // import voiceRecorderIcon from './assets/voiceRecorderIcon.png';
-// // import download from './assets/download.png';
-// import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
-
-// function ChatInterface() {    
-//     const [message, setMessage] = useState("Waiting for input...");    
-//     const [sqlOutput, setSqlOutput] = useState('');    
-
-//     const handleRecordVoice = () => {        
-//         alert("Voice recording feature will be implemented here!");    
-//     };    
-
-//     const handleDownloadOutput = () => {        
-//         const blob = new Blob([sqlOutput], { type: 'text/plain' });        
-//         const url = URL.createObjectURL(blob);        
-//         const link = document.createElement('a');        
-//         link.href = url;        
-//         link.download = 'sql-output.txt';        
-//         link.click();        
-//         URL.revokeObjectURL(url);    
-//     };    
-
-//     return(    
-//     <Container className = "my-4 p-3 border rounded">    {/*Message Display Area */}    
-//     <Row className = "mb-3">    <Col>    
-//     <div className = "p-3 border rounded text-center">    
-//         <p className = "m-0">{message}</p>    
-//     </div>    
-//     </Col>        
-//     </Row>    {/*voice recorder icon */}    
-//     <Row className="mb-3">    
-//         <Col className="text-center">    
-//             <Button variant="primary" onClick={handleRecordVoice} className="rounded-circle">    
-//                 {/* <img src={voiceRecorderIcon} alt="Voice recorder icon" style={{width: '24px', height:'24px' }} />     */}
-//             </Button>    
-//         </Col>    
-//     </Row>    {/* SQL Output Area */}    
-//             <Row>    
-//                 <Col>    
-//                 <InputGroup className="border rounded p-2">    
-//                 <FormControl    as="textarea"    rows="2"    readOnly    value={sqlOutput || "SELECT * FROM messages WHERE content LIKE '....'"}    
-//                 className="border-0"    />    
-//                 <Button variant ="outline-secondary" onClick={handleDownloadOutput}>        
-//                     {/* <img src={download} alt="Download icon" style={{width: '24px', height:'24px' }} />     */}
-//                 </Button>    
-//                 </InputGroup>    
-//                 </Col>    
-//             </Row>    
-//     </Container>    
-
-//     );
-// }
-
-// export default ChatInterface;

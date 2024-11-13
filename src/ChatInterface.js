@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Container, Row, Col, Button, InputGroup, FormControl } from 'react-bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import apiService from './service/ApiService';
 
 function ChatInterface() {
   const [message, setMessage] = useState('');
@@ -35,6 +36,8 @@ function ChatInterface() {
         }
       }
       setText(finalTranscript + interimTranscript);
+      apiService.postData(text)
+      console.log("" + finalTranscript + interimTranscript)
     };
 
     newRecognition.onend = () => {
@@ -85,19 +88,10 @@ function ChatInterface() {
       <Row className="mb-4">
         <Col>
           <InputGroup className="border rounded p-2 bg-light">
-            <FormControl
-              as="textarea"
-              rows="2"
-              value={message}
-              onChange={handleInputChange}
-              className="border-0 bg-light"
-              placeholder="Type your message here..."
-              style={{ fontSize: '1rem', color: '#495057' }}
-            />
             <Button
               onClick={isListening ? handleStopListening : handleStartListening}
               className="ml-2 rounded-circle"
-              style={{ width: '70px', height: '70px', backgroundColor: '#AAF0D1', border: 'none', outline: 'none' }}
+              style={{ width: '70px', height: '70px', backgroundColor: '#1e88e5', border: 'none', outline: 'none' }}
             >
               <span role="img" aria-label={isListening ? 'Stop Listening' : 'Start Listening'} style={{ fontSize: '2rem' }}>
                 {isListening ? '🔇' : '🔊'}
@@ -110,7 +104,7 @@ function ChatInterface() {
       <Row className="mb-4">
         <Col>
           <div className="p-3 border rounded text-center bg-light">
-            <p className="m-0" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{message}</p>
+            <p className="m-0" style={{ fontSize: '1.2rem', fontWeight: 'bold' }}>{text}</p>
           </div>
         </Col>
       </Row>
@@ -120,30 +114,14 @@ function ChatInterface() {
           <Button
             onClick={handleSubmit}
             className="ml-2"
-            style={{ width: '100px', height: '50px', backgroundColor: '#AAF0D1', border: 'none', outline: 'none' }}
+            style={{ width: '100px', height: '50px', backgroundColor: '#1e88e5', border: 'none', outline: 'none' }}
           >
             <span role="img" aria-label="Submit" style={{ fontSize: '1rem' }}>
-              SUBMIT
+              Query
             </span>
           </Button>
         </Col>
       </Row>
-      {/* Displaying Submitted Messages
-      <Row className="mb-4">
-        <Col>
-          <div className="p-3 border rounded bg-light">
-            <h4>Submitted Messages</h4>
-            <ul style={{ listStyleType: 'none', padding: 0 }}>
-              {messages.map((msg, index) => (
-                <li key={index} style={{ borderBottom: '1px solid #ccc', padding: '8px 0' }}>
-                  {msg}
-                </li>
-              ))}
-            </ul>
-          </div>
-        </Col>
-      </Row> */}
-      {/* SQL Output Area */}
       <Row>
         <Col>
           <InputGroup className="border rounded p-2 bg-light">
